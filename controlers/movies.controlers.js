@@ -11,14 +11,30 @@ module.exports.SEND_DATA =(req,res)=>{
 }
 module.exports.ADD_MOVIE= (req,res)=> {
     console.log(req.body)
-    const movie =new Movie(req.body)
+    if (!req.body.title) {
+        return res.send({error: true, msg: 'title required'})
+    }
+    if (!req.body.description) {
+        return res.send({error: true, msg: 'description required'})
+    }
+    if (!req.body.rating) {
+        return res.send({error: true, msg: 'rating required'})
+    }
+    if (req.body.rating > 5 || req.body.rating < 0 || !Number(req.body.rating)) {
+        return res.send({error: true, msg: 'rating invalid'})
+    }
+    if (!req.body.poster) {
+        return res.send({error: true, msg: 'poster required'})
+    }
+    const movie = new Movie(req.body)
     movie.save()
-    .then (ok=> {res.send('ok')})
-    .catch(err => {
-        console.log(err)
-        res.send('Not OK')
-    })
-
+        .then(ok => {
+            res.send({error: false, msg: 'Movie Added'})
+        })
+        .catch(err => {
+            console.log(err)
+            res.send({error: true, msg: 'Movie not added !'})
+        })
 }
 module.exports.ALL_MOVIES= (req,res)=>{
     movie.find ()
